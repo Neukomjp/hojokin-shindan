@@ -1,15 +1,16 @@
 import { useState, useEffect, Fragment } from 'react';
+import { supabase } from '../lib/supabase';
 import { questions } from '../data/questions';
 
 type Lead = {
   id: string;
-  createdAt: string;
-  companyName: string;
+  created_at: string;
+  company_name: string;
   phone: string;
   email: string;
-  maxAmount: number;
+  max_amount: number;
   answers: Record<string, string[]>;
-  scanUrl?: string;
+  scan_url?: string;
 };
 
 export default function AdminPage() {
@@ -23,15 +24,23 @@ export default function AdminPage() {
   const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'secure_admin_pass';
 
   useEffect(() => {
-    const saved = localStorage.getItem('hojokin_leads');
-    if (saved) {
-      try {
-        setLeads(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to parse leads', e);
+    const fetchLeads = async () => {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Failed to fetch leads from Supabase', error);
+      } else if (data) {
+        setLeads(data as Lead[]);
       }
+    };
+
+    if (isAuthenticated) {
+      fetchLeads();
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,13 +112,13 @@ export default function AdminPage() {
                 <Fragment key={lead.id}>
                   <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: expandedLeadId === lead.id ? '#f3fdf8' : 'transparent' }}>
                     <td style={{ padding: '1rem', color: 'var(--color-text-light)' }}>
-                      {new Date(lead.createdAt).toLocaleString('ja-JP')}
+                      {new Date(lead.created_at).toLocaleString('ja-JP')}
                     </td>
-                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{lead.companyName}</td>
+                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{lead.company_name}</td>
                     <td style={{ padding: '1rem' }}>{lead.phone}</td>
                     <td style={{ padding: '1rem' }}>{lead.email}</td>
                     <td style={{ padding: '1rem', color: 'var(--color-primary)', fontWeight: 'bold' }}>
-                      {lead.maxAmount}万円
+                      {lead.max_amount}万円
                     </td>
                     <td style={{ padding: '1rem' }}>
                       <button 
@@ -127,11 +136,11 @@ export default function AdminPage() {
                         <div style={{ fontSize: '0.95rem', maxWidth: '800px', margin: '0 auto' }}>
                           <h4 style={{ marginBottom: '1rem', color: 'var(--color-primary)', borderBottom: '2px solid var(--color-border)', paddingBottom: '0.5rem', fontWeight: 'bold' }}>診断時の回答内容</h4>
                           
-                          {lead.scanUrl && (
+                          {lead.scan_url && (
                             <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#e8f4fd', borderRadius: '4px', borderLeft: '4px solid var(--color-secondary, #306ad4)' }}>
                               <span style={{ fontWeight: 'bold', marginRight: '0.5rem', color: 'var(--color-text-main)' }}>AI自動診断元のURL:</span>
-                              <a href={lead.scanUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-secondary, #306ad4)', textDecoration: 'underline' }}>
-                                {lead.scanUrl}
+                              <a href={lead.scan_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-secondary, #306ad4)', textDecoration: 'underline' }}>
+                                {lead.scan_url}
                               </a>
                             </div>
                           )}

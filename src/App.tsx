@@ -4,6 +4,7 @@ import LeadForm from './components/LeadForm';
 import ResultPage from './components/ResultPage';
 import AdminPage from './components/AdminPage';
 import UrlScanner from './components/UrlScanner';
+import { supabase } from './lib/supabase';
 import { ArrowRight, CheckCircle2, Globe } from 'lucide-react';
 import { calculateDiagnosis } from './data/questions';
 
@@ -47,24 +48,24 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLeadSubmit = (data: { companyName: string; phone: string; email: string }) => {
+  const handleLeadSubmit = async (data: { companyName: string; phone: string; email: string }) => {
     const result = calculateDiagnosis(answers);
     const newLead = {
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      companyName: data.companyName,
+      company_name: data.companyName,
       phone: data.phone,
       email: data.email,
-      maxAmount: result.maxAmount,
+      max_amount: result.maxAmount,
       answers: answers,
-      scanUrl: scanUrl
+      scan_url: scanUrl || null
     };
 
     try {
-      const existing = JSON.parse(localStorage.getItem('hojokin_leads') || '[]');
-      localStorage.setItem('hojokin_leads', JSON.stringify([newLead, ...existing]));
+      const { error } = await supabase.from('leads').insert([newLead]);
+      if (error) {
+        console.error('Error saving to Supabase:', error);
+      }
     } catch (e) {
-      console.error('Failed to save lead', e);
+      console.error('Failed to save to Supabase:', e);
     }
 
     setLeadData(data);
