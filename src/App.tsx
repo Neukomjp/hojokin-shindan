@@ -16,6 +16,7 @@ function App() {
   const [, setLeadData] = useState<{ companyName: string; phone: string; email: string } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [scanUrl, setScanUrl] = useState('');
+  const [aiProposalText, setAiProposalText] = useState<string | null>(null);
 
   useEffect(() => {
     const checkHash = () => setIsAdmin(window.location.hash === '#admin');
@@ -26,6 +27,7 @@ function App() {
 
   const handleStart = () => {
     setScanUrl(''); // Clear the URL state if they start a manual diagnosis
+    setAiProposalText(null); // Clear previous AI text
     setStep('questionnaire');
   };
 
@@ -42,8 +44,9 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleUrlScanComplete = (autoAnswers: Record<string, string[]>) => {
+  const handleUrlScanComplete = (autoAnswers: Record<string, string[]>, aiProposal?: string) => {
     setAnswers(autoAnswers);
+    if (aiProposal) setAiProposalText(aiProposal);
     setStep('lead_form');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -158,7 +161,7 @@ function App() {
         )}
 
         {step === 'result' && (
-          <ResultPage answers={answers} />
+          <ResultPage answers={answers} aiProposal={aiProposalText} />
         )}
       </main>
 

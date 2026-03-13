@@ -4,9 +4,10 @@ import { PiggyBank, ExternalLink, MessageCircle } from 'lucide-react';
 
 type Props = {
   answers: Record<string, string[]>;
+  aiProposal?: string | null;
 };
 
-export default function ResultPage({ answers }: Props) {
+export default function ResultPage({ answers, aiProposal }: Props) {
   const result = calculateDiagnosis(answers);
   const [animatedAmount, setAnimatedAmount] = useState(0);
 
@@ -45,6 +46,18 @@ export default function ResultPage({ answers }: Props) {
       <h1 className="text-center" style={{ color: 'var(--color-primary)', fontSize: '2rem', marginBottom: '2rem' }}>
         診断結果
       </h1>
+      
+      {/* AIからの提案パネル (URL自動診断時のみ表示) */}
+      {aiProposal && (
+        <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem', borderLeft: '4px solid var(--color-primary)', backgroundColor: 'var(--color-bg-alt)' }}>
+          <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--color-primary)', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            ✨ AIからの個別提案
+          </h3>
+          <p style={{ fontSize: '0.95rem', lineHeight: '1.8', color: 'var(--color-text-main)', whiteSpace: 'pre-wrap' }}>
+            {aiProposal}
+          </p>
+        </div>
+      )}
       
       {/* 最大受給金額カード */}
       <div className="glass-panel text-center" style={{ padding: '3rem 2rem', marginBottom: '2rem', background: 'linear-gradient(135deg, var(--color-primary-light) 0%, white 100%)' }}>

@@ -3,7 +3,7 @@ import { Search, Globe, Cpu, CheckCircle } from 'lucide-react';
 
 type Props = {
   url: string;
-  onComplete: (answers: Record<string, string[]>) => void;
+  onComplete: (answers: Record<string, string[]>, aiProposal?: string) => void;
 };
 
 export default function UrlScanner({ url, onComplete }: Props) {
@@ -63,7 +63,10 @@ export default function UrlScanner({ url, onComplete }: Props) {
           setIcon(<CheckCircle size={48} color="var(--color-success, #009342)" />);
           
           setTimeout(() => {
-            if (isSubscribed) onComplete(data);
+            if (isSubscribed) {
+               const { aiProposal, ...answers } = data;
+               onComplete(answers, aiProposal);
+            }
           }, 800);
         }
 
