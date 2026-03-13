@@ -64,8 +64,40 @@ export default function UrlScanner({ url, onComplete }: Props) {
           
           setTimeout(() => {
             if (isSubscribed) {
-               const { aiProposal, ...answers } = data;
-               onComplete(answers, aiProposal);
+               const { aiProposal, ...rawAnswers } = data;
+               
+               // AIが返した q1〜q6 の数値を、計算ロジック（calculateDiagnosis）が期待するID文字列に変換する
+               const mappedAnswers: Record<string, string[]> = {};
+               
+               // URL診断の場合は、社会保険などの前提条件はクリア済みと見なす（手動入力フォームを省いているため）
+               // これによりResultPageでの警告が非表示になり、助成金の金額が正しく算出される
+               mappedAnswers['companyStatus'] = ['social_insurance', 'no_labor_violations'];
+               
+               const businessInitiatives: string[] = [];
+               const employeeInitiatives: string[] = [];
+               
+               if (Array.isArray(rawAnswers.q3)) {
+                 rawAnswers.q3.forEach((val: string) => {
+                   switch(val) {
+                     case '1': businessInitiatives.push('it_tools'); break;
+                     case '2': businessInitiatives.push('new_business'); break;
+                     case '3': businessInitiatives.push('hp_ec'); break;
+                     case '4': businessInitiatives.push('machines_interior'); break;
+                     case '5': businessInitiatives.push('machines_interior'); break;
+                     case '6': employeeInitiatives.push('hire_new'); break;
+                     case '7': employeeInitiatives.push('part_time_improvement'); break;
+                     case '8': businessInitiatives.push('it_tools'); break;
+                     case '9': employeeInitiatives.push('external_training'); break;
+                   }
+                 });
+               }
+               mappedAnswers['businessInitiatives'] = businessInitiatives;
+               mappedAnswers['employeeInitiatives'] = employeeInitiatives;
+               
+               // 予算の判定（未定以外であればなんでもOK）
+               mappedAnswers['budget'] = rawAnswers.q4 && rawAnswers.q4[0] !== '1' ? ['150万円〜300万円'] : ['未定'];
+
+               onComplete(mappedAnswers, aiProposal);
             }
           }, 800);
         }
@@ -79,12 +111,10 @@ export default function UrlScanner({ url, onComplete }: Props) {
           
           // Provide default safe answers if scraping fails
           const fallbackAnswers: Record<string, string[]> = {
-            'q1': ['3'],
-            'q2': ['8'],
-            'q3': ['1', '2'],
-            'q4': ['3'],
-            'q5': ['3'],
-            'q6': ['3']
+            'companyStatus': ['social_insurance', 'no_labor_violations'],
+            'businessInitiatives': ['it_tools'],
+            'employeeInitiatives': ['hire_new'],
+            'budget': ['300万円〜500万円']
           };
           setTimeout(() => {
             if (isSubscribed) onComplete(fallbackAnswers);
