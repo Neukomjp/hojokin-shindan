@@ -1,0 +1,28 @@
+remote: This repository moved. Please use the new location:        
+remote:   https://github.com/Neukomjp/hojokin-shindan.git        
+remote: error: GH013: Repository rule violations found for refs/heads/main.        
+remote: 
+remote: - GITHUB PUSH PROTECTION        
+remote:   窶披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披・       
+remote:     Resolve the following violations before pushing again        
+remote: 
+remote:     - Push cannot contain secrets        
+remote: 
+remote:             
+remote:      (?) Learn how to resolve a blocked push        
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push        
+remote:             
+remote:             
+remote:       窶披・OpenAI API Key 窶披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披披・       
+remote:        locations:        
+remote:          - commit: e00a601f21ae37f23137b3d1e6d59bd8a676c7f0        
+remote:            path: .env:1        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/Neukomjp/hojokin-shindan/security/secret-scanning/unblock-secret/3AsZNqu3iGMOjuNhOQNg0p0AHVt        
+remote:             
+remote: 
+remote: 
+To https://github.com/neukomjp/hojokin-shindan.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/neukomjp/hojokin-shindan.git'
