@@ -16,13 +16,30 @@ type Lead = {
 export default function AdminPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [inputEmail, setInputEmail] = useState('');
   const [inputPassword, setInputPassword] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
 
-  // Read the secure password from Environment Variables (fallback to a strong default or throw an error in a real app)
-  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'secure_admin_pass';
+  // Check initial session
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setIsAuthenticated(true);
+      }
+      setIsLoading(false);
+    };
+    checkSession();
 
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
   useEffect(() => {
     const fetchLeads = async () => {
       const { data, error } = await supabase
@@ -42,15 +59,30 @@ export default function AdminPage() {
     }
   }, [isAuthenticated]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputPassword === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      setError(false);
+    setError('');
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: inputEmail,
+      password: inputPassword,
+    });
+
+    if (signInError) {
+      setError('メールアドレスかパスワードが間違っています。');
     } else {
-      setError(true);
+      setInputPassword('');
+      setInputEmail('');
     }
   };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  if (isLoading) {
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>読み込み中...</div>;
+  }
 
   if (!isAuthenticated) {
     return (
@@ -86,6 +118,9 @@ export default function AdminPage() {
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2rem', color: 'var(--color-primary)' }}>リード（顧客情報）管理画面</h1>
+        <button onClick={handleLogout} className="btn-outline" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }}>
+          ログアウト
+        </button>
       </div>
 
       <div className="glass-panel" style={{ overflowX: 'auto', padding: '0' }}>
