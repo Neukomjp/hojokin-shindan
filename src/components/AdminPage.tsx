@@ -92,16 +92,30 @@ export default function AdminPage() {
           リード情報を閲覧するにはパスワードを入力してください。
         </p>
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div>
-            <input
-              type="password"
-              value={inputPassword}
-              onChange={(e) => setInputPassword(e.target.value)}
-              placeholder="パスワード"
-              className="form-input"
-              style={{ padding: '0.75rem', width: '100%', border: error ? '2px solid var(--color-alert)' : '1px solid var(--color-border)' }}
-            />
-            {error && <p style={{ color: 'var(--color-alert)', fontSize: '0.8rem', marginTop: '0.5rem', textAlign: 'left' }}>パスワードが間違っています。</p>}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <input
+                type="email"
+                value={inputEmail}
+                onChange={(e) => setInputEmail(e.target.value)}
+                placeholder="メールアドレス (admin@example.com)"
+                className="form-input"
+                style={{ padding: '0.75rem', width: '100%', border: '1px solid var(--color-border)' }}
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                value={inputPassword}
+                onChange={(e) => setInputPassword(e.target.value)}
+                placeholder="パスワード"
+                className="form-input"
+                style={{ padding: '0.75rem', width: '100%', border: error ? '2px solid var(--color-alert)' : '1px solid var(--color-border)' }}
+                required
+              />
+            </div>
+            {error && <p style={{ color: 'var(--color-alert)', fontSize: '0.8rem', textAlign: 'left' }}>{error}</p>}
           </div>
           <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
             ログイン
