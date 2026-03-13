@@ -19,8 +19,8 @@ export default function AdminPage() {
   const [error, setError] = useState(false);
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
 
-  // Hardcoded password for this simple demo
-  const ADMIN_PASSWORD = 'admin';
+  // Read the secure password from Environment Variables (fallback to a strong default or throw an error in a real app)
+  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'secure_admin_pass';
 
   useEffect(() => {
     const saved = localStorage.getItem('hojokin_leads');
