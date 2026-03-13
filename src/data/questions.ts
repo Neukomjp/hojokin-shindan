@@ -146,7 +146,7 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
     id: 'syoukibo',
     title: '小規模事業者持続化補助金',
     description: '小規模事業者が、働き方改革や被用者保険の適用拡大、賃金引上げ、インボイス導入等の制度変更に対応するため、経営計画を作成し、それらに基づいて行う販路開拓の取組み等の経費の一部を補助するものです。',
-    maxAmount: 50,
+    maxAmount: 250, // 賃上げ特例等適用時の最大額
     url: 'https://r6.jizokukahojokin.info/'
   });
 
@@ -167,7 +167,7 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
       id: 'it_dounyu',
       title: 'IT導入補助金',
       description: '中小企業・小規模事業者等が業務効率化・売上アップをするためのＩＴツールを導入する場合に補助します。事前に登録されたツール・事業者から選んで導入をおこないます。',
-      maxAmount: 150,
+      maxAmount: 450,
       url: 'https://it-shien.smrj.go.jp/'
     });
   }
@@ -178,7 +178,7 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
       id: 'monodukuri',
       title: 'ものづくり補助金',
       description: '中小企業・小規模事業者等の生産性向上に資する「革新的な新製品・新サービス開発」や海外需要開拓を行う事業のために必要な設備投資等に要する経費の一部を補助する制度です。',
-      maxAmount: 500,
+      maxAmount: 4000, // グローバル枠や大幅賃上げ特例等の最大レベル
       url: 'http://portal.monodukuri-hojo.jp'
     });
   }
