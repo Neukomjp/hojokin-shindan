@@ -161,7 +161,7 @@ function App() {
         )}
 
         {step === 'result' && (
-          <ResultPage answers={answers} aiProposal={aiProposalText} />
+          <ResultPage answers={answers} aiProposal={aiProposalText} isUrlScan={!!scanUrl} />
         )}
       </main>
 

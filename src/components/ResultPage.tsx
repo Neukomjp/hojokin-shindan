@@ -5,9 +5,10 @@ import { PiggyBank, ExternalLink, MessageCircle } from 'lucide-react';
 type Props = {
   answers: Record<string, string[]>;
   aiProposal?: string | null;
+  isUrlScan?: boolean;
 };
 
-export default function ResultPage({ answers, aiProposal }: Props) {
+export default function ResultPage({ answers, aiProposal, isUrlScan }: Props) {
   const result = calculateDiagnosis(answers);
   const [animatedAmount, setAnimatedAmount] = useState(0);
 
@@ -92,7 +93,7 @@ export default function ResultPage({ answers, aiProposal }: Props) {
       </div>
 
       {/* 条件アラート */}
-      {(!hasSocialInsurance || !hasNoLaborViolations) && (
+      {!isUrlScan && (!hasSocialInsurance || !hasNoLaborViolations) && (
         <div style={{ border: '2px solid var(--color-alert)', padding: '1.5rem', borderRadius: 'var(--radius-md)', marginBottom: '3rem', backgroundColor: '#fef2f2' }}>
           <h4 style={{ color: 'var(--color-alert)', fontWeight: 700, marginBottom: '0.5rem' }}>※ご注意事項※</h4>
           <p style={{ fontSize: '0.9rem' }}>厚労省の助成金に関しては以下の項目を整備されることが必須となります。</p>
