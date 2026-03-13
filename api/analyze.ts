@@ -19,26 +19,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
     // 1. Scrape the URL
     console.log(`Scraping URL: ${url}`);
-    const fetchResponse = await fetch(url.startsWith('http') ? url : `https://${url}`, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) HojokinShindanBot/1.0',
-      },
-      redirect: 'follow', // Allow following redirects to handle some bot protections
-    });
+    
+    let fetchResponse;
+    try {
+      fetchResponse = await fetch(url.startsWith('http') ? url : `https://${url}`, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'ja,en-US;q=0.7,en;q=0.3',
+          'Connection': 'keep-alive',
+          'Upgrade-Insecure-Requests': '1',
+          'Sec-Fetch-Dest': 'document',
+          'Sec-Fetch-Mode': 'navigate',
+          'Sec-Fetch-Site': 'none',
+          'Sec-Fetch-User': '?1',
+          'Cache-Control': 'max-age=0'
+        },
+      });
+    } catch (networkError: any) {
+      console.error('Network error during fetch:', networkError);
+      throw new Error(`サイトへのアクセスに失敗しました。URLが間違っているか、サイトが存在しない可能性があります。(${networkError.message})`);
+    }
 
     if (!fetchResponse.ok) {
-      throw new Error(`Failed to fetch URL: ${fetchResponse.status} ${fetchResponse.statusText}`);
+      throw new Error(`サイトからエラーが返されました: ${fetchResponse.status} ${fetchResponse.statusText}`);
     }
 
     const html = await fetchResponse.text();
     const $ = cheerio.load(html);
 
-    // Remove script and style elements to clean up text
-    $('script, style, noscript, iframe, img, svg, video').remove();
-    const textContent = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 10000); // Limit to 10k chars to avoid token limits
+    // Remove noisy elements to extract clean text
+    $('script, style, noscript, iframe, img, svg, video, footer, nav, header').remove();
+    const textContent = $('body').text().replace(/\s+/g, ' ').trim().slice(0, 8000); // 8k chars limit for token safety
 
-    if (!textContent) {
-      throw new Error('No readable text found on the website.');
+    if (!textContent || textContent.length < 50) {
+      throw new Error('Not enough readable text found on the website to perform analysis.');
     }
 
     console.log(`Extracted text length: ${textContent.length} characters`);
