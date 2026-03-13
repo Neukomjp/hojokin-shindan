@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, Globe, Cpu, CheckCircle } from 'lucide-react';
 
 type Props = {
@@ -11,50 +11,92 @@ export default function UrlScanner({ url, onComplete }: Props) {
   const [status, setStatus] = useState('対象サイトへアクセス中...');
   const [icon, setIcon] = useState(<Globe size={48} color="var(--color-primary)" />);
 
+  const hasFetched = useRef(false);
+
   useEffect(() => {
-    // Simulated scanning sequence
-    const sequence = [
-      { time: 500,  progress: 15, text: '企業サイトの構造を解析中...', icon: <Search size={48} color="var(--color-primary)" /> },
-      { time: 1500, progress: 40, text: '事業内容・サービス情報を抽出中...', icon: <Cpu size={48} color="var(--color-primary)" /> },
-      { time: 3000, progress: 75, text: 'AIが従業員規模・課題を特定・分析中...', icon: <Cpu size={48} color="var(--color-primary)" /> },
-      { time: 4500, progress: 95, text: '最適な補助金・助成金データベースと照合中...', icon: <Search size={48} color="var(--color-primary)" /> },
-      { time: 5500, progress: 100, text: '解析完了！', icon: <CheckCircle size={48} color="var(--color-success, #009342)" /> }
-    ];
+    if (hasFetched.current) return;
+    hasFetched.current = true;
 
-    let timeouts: number[] = [];
+    let isSubscribed = true;
+    let progressInterval: number;
 
-    // Initial state
-    setProgress(5);
+    const startAnalysis = async () => {
+      try {
+        // Start fake progress while waiting for the API
+        setProgress(5);
+        let currentProgress = 5;
+        progressInterval = window.setInterval(() => {
+          if (currentProgress < 90) {
+            currentProgress += Math.floor(Math.random() * 5) + 1;
+            if (isSubscribed) setProgress(currentProgress);
+            
+            // Update status text based on progress
+            if (currentProgress > 70 && isSubscribed) {
+               setStatus('AIが従業員規模・課題を特定・分析中...');
+               setIcon(<Cpu size={48} color="var(--color-primary)" />);
+            } else if (currentProgress > 30 && isSubscribed) {
+               setStatus('事業内容・サービス情報を抽出中...');
+               setIcon(<Search size={48} color="var(--color-primary)" />);
+            }
+          }
+        }, 800);
 
-    sequence.forEach((step) => {
-      const t = setTimeout(() => {
-        setProgress(step.progress);
-        setStatus(step.text);
-        setIcon(step.icon);
+        // Call the real API
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+
+        const data = await response.json();
+
+        // Finish progress
+        clearInterval(progressInterval);
         
-        if (step.progress === 100) {
-          // Prepare maximum payout mock answers after animation
-          const mockAnswers: Record<string, string[]> = {
-            'employeeCount': ['21-50名'],
-            'industry': ['情報通信・IT業'],
-            'companyStatus': ['social_insurance', 'no_labor_violations'],
-            'businessInitiatives': ['hp_ec', 'it_tools', 'ai_dev', 'machines_interior'],
-            'budget': ['1,000万円〜'],
-            'employeeInitiatives': ['ai_training', 'hire_new', 'part_time_improvement']
-          };
+        if (isSubscribed) {
+          setProgress(100);
+          setStatus('解析完了！');
+          setIcon(<CheckCircle size={48} color="var(--color-success, #009342)" />);
           
           setTimeout(() => {
-            onComplete(mockAnswers);
+            if (isSubscribed) onComplete(data);
           }, 800);
         }
-      }, step.time);
-      timeouts.push(t as unknown as number);
-    });
+
+      } catch (error) {
+        console.error('Analysis error:', error);
+        clearInterval(progressInterval);
+        if (isSubscribed) {
+          setStatus('解析に失敗しました。サイトを読み取れませんでした。');
+          setIcon(<Globe size={48} color="var(--color-alert, #e53e3e)" />);
+          
+          // Provide default safe answers if scraping fails
+          const fallbackAnswers: Record<string, string[]> = {
+            'q1': ['3'],
+            'q2': ['8'],
+            'q3': ['1', '2'],
+            'q4': ['3'],
+            'q5': ['3'],
+            'q6': ['3']
+          };
+          setTimeout(() => {
+            if (isSubscribed) onComplete(fallbackAnswers);
+          }, 2000);
+        }
+      }
+    };
+
+    startAnalysis();
 
     return () => {
-      timeouts.forEach(clearTimeout);
+      isSubscribed = false;
+      if (progressInterval) clearInterval(progressInterval);
     };
-  }, [onComplete]);
+  }, [url, onComplete]);
 
   return (
     <div className="container mt-8 animate-fade-in" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
