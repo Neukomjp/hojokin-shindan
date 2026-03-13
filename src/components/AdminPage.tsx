@@ -1,0 +1,169 @@
+import { useState, useEffect, Fragment } from 'react';
+import { questions } from '../data/questions';
+
+type Lead = {
+  id: string;
+  createdAt: string;
+  companyName: string;
+  phone: string;
+  email: string;
+  maxAmount: number;
+  answers: Record<string, string[]>;
+  scanUrl?: string;
+};
+
+export default function AdminPage() {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [inputPassword, setInputPassword] = useState('');
+  const [error, setError] = useState(false);
+  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+
+  // Hardcoded password for this simple demo
+  const ADMIN_PASSWORD = 'admin';
+
+  useEffect(() => {
+    const saved = localStorage.getItem('hojokin_leads');
+    if (saved) {
+      try {
+        setLeads(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse leads', e);
+      }
+    }
+  }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (inputPassword === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ maxWidth: '400px', margin: '4rem auto', padding: '2rem' }} className="glass-panel text-center animate-fade-in">
+        <h2 style={{ color: 'var(--color-primary)', marginBottom: '1.5rem', fontSize: '1.5rem' }}>管理者ログイン</h2>
+        <p style={{ marginBottom: '2rem', fontSize: '0.9rem', color: 'var(--color-text-light)' }}>
+          リード情報を閲覧するにはパスワードを入力してください。
+        </p>
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <input
+              type="password"
+              value={inputPassword}
+              onChange={(e) => setInputPassword(e.target.value)}
+              placeholder="パスワード"
+              className="form-input"
+              style={{ padding: '0.75rem', width: '100%', border: error ? '2px solid var(--color-alert)' : '1px solid var(--color-border)' }}
+            />
+            {error && <p style={{ color: 'var(--color-alert)', fontSize: '0.8rem', marginTop: '0.5rem', textAlign: 'left' }}>パスワードが間違っています。</p>}
+          </div>
+          <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+            ログイン
+          </button>
+        </form>
+        <div style={{ marginTop: '2rem' }}>
+          <a href="#" className="btn-outline" style={{ display: 'inline-block', fontSize: '0.85rem' }}>診断ページに戻る</a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h1 style={{ fontSize: '2rem', color: 'var(--color-primary)' }}>リード（顧客情報）管理画面</h1>
+      </div>
+
+      <div className="glass-panel" style={{ overflowX: 'auto', padding: '0' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead style={{ backgroundColor: 'var(--color-bg-alt)' }}>
+            <tr>
+              <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>登録日時</th>
+              <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>会社名</th>
+              <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>電話番号</th>
+              <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>メールアドレス</th>
+              <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>受給見込み額</th>
+              <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leads.length === 0 ? (
+              <tr>
+                <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-light)' }}>
+                  まだ登録されたリード情報はありません。
+                </td>
+              </tr>
+            ) : (
+              leads.map((lead) => (
+                <Fragment key={lead.id}>
+                  <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: expandedLeadId === lead.id ? '#f3fdf8' : 'transparent' }}>
+                    <td style={{ padding: '1rem', color: 'var(--color-text-light)' }}>
+                      {new Date(lead.createdAt).toLocaleString('ja-JP')}
+                    </td>
+                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{lead.companyName}</td>
+                    <td style={{ padding: '1rem' }}>{lead.phone}</td>
+                    <td style={{ padding: '1rem' }}>{lead.email}</td>
+                    <td style={{ padding: '1rem', color: 'var(--color-primary)', fontWeight: 'bold' }}>
+                      {lead.maxAmount}万円
+                    </td>
+                    <td style={{ padding: '1rem' }}>
+                      <button 
+                        onClick={() => setExpandedLeadId(expandedLeadId === lead.id ? null : lead.id)}
+                        className={expandedLeadId === lead.id ? "btn-outline" : "btn-primary"} 
+                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', whiteSpace: 'nowrap', borderRadius: '4px', cursor: 'pointer', border: '1px solid var(--color-primary)', background: expandedLeadId === lead.id ? 'transparent' : 'var(--color-primary)', color: expandedLeadId === lead.id ? 'var(--color-primary)' : 'white' }}
+                      >
+                        {expandedLeadId === lead.id ? '閉じる' : '回答を見る'}
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedLeadId === lead.id && (
+                    <tr style={{ backgroundColor: '#f9fafb' }}>
+                      <td colSpan={6} style={{ padding: '1.5rem', borderBottom: '1px solid var(--color-border)' }}>
+                        <div style={{ fontSize: '0.95rem', maxWidth: '800px', margin: '0 auto' }}>
+                          <h4 style={{ marginBottom: '1rem', color: 'var(--color-primary)', borderBottom: '2px solid var(--color-border)', paddingBottom: '0.5rem', fontWeight: 'bold' }}>診断時の回答内容</h4>
+                          
+                          {lead.scanUrl && (
+                            <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#e8f4fd', borderRadius: '4px', borderLeft: '4px solid var(--color-secondary, #306ad4)' }}>
+                              <span style={{ fontWeight: 'bold', marginRight: '0.5rem', color: 'var(--color-text-main)' }}>AI自動診断元のURL:</span>
+                              <a href={lead.scanUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-secondary, #306ad4)', textDecoration: 'underline' }}>
+                                {lead.scanUrl}
+                              </a>
+                            </div>
+                          )}
+
+                          <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                            {questions.map(q => {
+                              const ansKeys = lead.answers?.[q.id] || [];
+                              const ansLabels = ansKeys.map(k => q.options.find(o => o.id === k)?.label || k).join('、 ');
+                              return (
+                                <li key={q.id}>
+                                  <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>{q.title}</div>
+                                  <div style={{ color: ansLabels ? 'var(--color-secondary, #306ad4)' : 'var(--color-text-light)' }}>
+                                    {ansLabels || '（未回答）'}
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+      
+      <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+         <a href="#" className="btn-outline" style={{ display: 'inline-block' }}>診断ページに戻る</a>
+      </div>
+    </div>
+  );
+}
