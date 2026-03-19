@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { supabase } from '../lib/supabase';
 import { questions } from '../data/questions';
+import { Download } from 'lucide-react';
 
 type Lead = {
   id: string;
@@ -80,6 +81,45 @@ export default function AdminPage() {
     await supabase.auth.signOut();
   };
 
+  const handleExportCSV = () => {
+    if (leads.length === 0) return;
+
+    const headers = ['登録日時', '会社名', '電話番号', 'メールアドレス', '受給見込み額（万円）', 'スキャンURL'];
+    // Add question titles as headers
+    questions.forEach(q => headers.push(q.title));
+
+    const rows = leads.map(lead => {
+      const row: string[] = [
+        new Date(lead.created_at).toLocaleString('ja-JP'),
+        lead.company_name,
+        lead.phone,
+        lead.email,
+        String(lead.max_amount),
+        lead.scan_url || '',
+      ];
+      questions.forEach(q => {
+        const ansKeys = lead.answers?.[q.id] || [];
+        const ansLabels = ansKeys.map(k => q.options.find(o => o.id === k)?.label || k).join(' / ');
+        row.push(ansLabels || '未回答');
+      });
+      return row;
+    });
+
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    // BOM for Excel Japanese compatibility
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `leads_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (isLoading) {
     return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>読み込み中...</div>;
   }
@@ -130,11 +170,21 @@ export default function AdminPage() {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h1 style={{ fontSize: '2rem', color: 'var(--color-primary)' }}>リード（顧客情報）管理画面</h1>
-        <button onClick={handleLogout} className="btn-outline" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }}>
-          ログアウト
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <button
+            onClick={handleExportCSV}
+            disabled={leads.length === 0}
+            className="btn btn-primary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 1rem', fontSize: '0.9rem', opacity: leads.length === 0 ? 0.5 : 1 }}
+          >
+            <Download size={16} /> CSVエクスポート
+          </button>
+          <button onClick={handleLogout} className="btn-outline" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }}>
+            ログアウト
+          </button>
+        </div>
       </div>
 
       <div className="glass-panel" style={{ overflowX: 'auto', padding: '0' }}>
