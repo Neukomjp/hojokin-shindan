@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { questions, type Question } from '../data/questions';
-import { Check, ChevronRight, ArrowLeft } from 'lucide-react';
+import { Check, ArrowRight, ArrowLeft } from 'lucide-react';
 
 type Props = {
   onComplete: (answers: Record<string, string[]>) => void;
@@ -121,7 +121,7 @@ export default function Questionnaire({ onComplete, onBack }: Props) {
                 onClick={handleNext}
                 style={{ minWidth: '200px' }}
               >
-                次の質問へ <ChevronRight size={20} />
+                次の質問へ <ArrowRight size={20} />
               </button>
             </div>
           )}
