@@ -66,6 +66,19 @@ function App() {
       const { error } = await supabase.from('leads').insert([newLead]);
       if (error) {
         console.error('Error saving to Supabase:', error);
+      } else {
+        // Send email notification to admin (fire-and-forget)
+        fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            companyName: data.companyName,
+            phone: data.phone,
+            email: data.email,
+            maxAmount: result.maxAmount,
+            scanUrl: scanUrl || null,
+          }),
+        }).catch(err => console.error('Notification failed:', err));
       }
     } catch (e) {
       console.error('Failed to save to Supabase:', e);
