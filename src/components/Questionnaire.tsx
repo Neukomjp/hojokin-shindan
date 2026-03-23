@@ -16,8 +16,11 @@ export default function Questionnaire({ onComplete, onBack }: Props) {
   const progress = ((currentIndex) / questions.length) * 100;
 
   useEffect(() => {
-    setAnimate(true);
-  }, [currentIndex]);
+    // delay slightly to allow entering animation class to apply after DOM update
+    const timer = setTimeout(() => setAnimate(true), 10);
+    return () => clearTimeout(timer);
+  }, [currentIndex, setAnimate]);
+
 
   const handleOptionToggle = (optionId: string) => {
     const currentAnswers = answers[question.id] || [];

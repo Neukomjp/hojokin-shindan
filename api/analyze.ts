@@ -37,9 +37,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           'Cache-Control': 'max-age=0'
         },
       });
-    } catch (networkError: any) {
+    } catch (networkError: unknown) {
       console.error('Network error during fetch:', networkError);
-      throw new Error(`サイトへのアクセスに失敗しました。URLが間違っているか、サイトが存在しない可能性があります。(${networkError.message})`);
+      const errorMessage = networkError instanceof Error ? networkError.message : 'Unknown error';
+      throw new Error(`サイトへのアクセスに失敗しました。URLが間違っているか、サイトが存在しない可能性があります。(${errorMessage})`);
     }
 
     if (!fetchResponse.ok) {
@@ -167,8 +168,9 @@ AIは提案を生成する際、以下の正確な上限額情報を引用し、
 
     return res.status(200).json(resultJson);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error during URL analysis:', error);
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    const errorMessage = error instanceof Error ? error.message : 'Internal Server Error';
+    return res.status(500).json({ error: errorMessage });
   }
 }
