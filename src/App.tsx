@@ -181,7 +181,7 @@ function App() {
 
       {/* 共通フッター */}
       <footer style={{ backgroundColor: 'var(--color-bg-alt)', padding: '2rem', textAlign: 'center', color: 'var(--color-text-light)', marginTop: 'auto' }}>
-        <p style={{ fontSize: '0.85rem' }}>&copy; 2026 補助くる. All Rights Reserved.</p>
+        <p style={{ fontSize: '0.85rem' }}>&copy; 2026 補助くる All Rights Reserved.</p>
       </footer>
     </div>
   );
