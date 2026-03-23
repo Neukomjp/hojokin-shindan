@@ -3,9 +3,10 @@ import { ChevronRight } from 'lucide-react';
 
 type Props = {
   onSubmit: (leadData: { companyName: string; phone: string; email: string }) => void;
+  maxAmount?: number;
 };
 
-export default function LeadForm({ onSubmit }: Props) {
+export default function LeadForm({ onSubmit, maxAmount }: Props) {
   const [formData, setFormData] = useState({
     companyName: '',
     phone: '',
@@ -59,7 +60,15 @@ export default function LeadForm({ onSubmit }: Props) {
   return (
     <div className="container mt-8 animate-fade-in">
       <div className="glass-panel" style={{ padding: '2rem' }}>
-        <h2 className="text-center" style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>
+        {maxAmount !== undefined && maxAmount > 0 && (
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem', padding: '1.5rem', background: 'linear-gradient(135deg, #e8f5e9, #c8e6c9)', borderRadius: 'var(--radius-md)' }}>
+            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-light)', marginBottom: '0.5rem' }}>あなたの受給見込み額</p>
+            <p style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--color-primary)', margin: 0, lineHeight: 1.2 }}>
+              最大 <span style={{ fontSize: '3rem' }}>{maxAmount}</span> 万円
+            </p>
+          </div>
+        )}
+        <h2 className="text-center" style={{ marginBottom: '1rem', fontSize: '1.5rem' }}>
           診断結果をご覧になる前に
         </h2>
         <p className="text-center" style={{ marginBottom: '2rem', color: 'var(--color-text-light)' }}>

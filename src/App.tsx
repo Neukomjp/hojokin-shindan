@@ -170,7 +170,8 @@ function App() {
 
         {step === 'lead_form' && (
           <LeadForm 
-            onSubmit={handleLeadSubmit} 
+            onSubmit={handleLeadSubmit}
+            maxAmount={calculateDiagnosis(answers).maxAmount}
           />
         )}
 
