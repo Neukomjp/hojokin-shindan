@@ -71,10 +71,6 @@ export default function Questionnaire({ onComplete, onBack }: Props) {
 
   return (
     <div className="container mt-8">
-      <button onClick={handlePrev} className="btn-outline" style={{ border: 'none', padding: '0.5rem', marginBottom: '1rem', color: 'var(--color-text-light)' }}>
-        <ArrowLeft size={20} style={{ marginRight: '8px' }} /> 戻る
-      </button>
-
       <div className="glass-panel" style={{ padding: '2rem', transition: 'all 0.3s' }}>
         <div style={{ textAlign: 'center', marginBottom: '1rem', color: 'var(--color-primary)', fontWeight: 'bold' }}>
           STEP {currentIndex + 1} / {questions.length}
@@ -129,6 +125,12 @@ export default function Questionnaire({ onComplete, onBack }: Props) {
               </button>
             </div>
           )}
+
+          <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+            <button onClick={handlePrev} className="btn-outline" style={{ border: 'none', padding: '0.5rem', color: 'var(--color-text-light)' }}>
+              <ArrowLeft size={20} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> 戻る
+            </button>
+          </div>
         </div>
       </div>
     </div>
