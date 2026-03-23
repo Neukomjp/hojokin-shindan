@@ -132,9 +132,9 @@ export default function ResultPage({ answers, aiProposal, isUrlScan }: Props) {
 
       <div className="text-center" style={{ marginTop: '3rem' }}>
         <p style={{ marginBottom: '1rem', fontWeight: 600 }}>まずは無料で、お気軽に</p>
-        <button className="btn btn-primary btn-lg" style={{ width: '100%', maxWidth: '400px' }}>
+        <a href="tel:0668096625" className="btn btn-primary btn-lg" style={{ width: '100%', maxWidth: '400px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
           <MessageCircle size={20} /> 申請の相談をする
-        </button>
+        </a>
       </div>
     </div>
   );
