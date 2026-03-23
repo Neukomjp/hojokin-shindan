@@ -127,8 +127,8 @@ export default function Questionnaire({ onComplete, onBack }: Props) {
           )}
 
           <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-            <button onClick={handlePrev} className="btn-outline" style={{ border: 'none', padding: '0.5rem', color: 'var(--color-text-light)' }}>
-              <ArrowLeft size={20} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> 戻る
+            <button onClick={handlePrev} className="btn btn-outline" style={{ minWidth: '200px', border: '2px solid var(--color-primary)', color: 'var(--color-primary)' }}>
+              <ArrowLeft size={20} /> 戻る
             </button>
           </div>
         </div>
