@@ -97,6 +97,9 @@ export default function Questionnaire({ onComplete, onBack }: Props) {
                   <div style={{ 
                     width: '24px', 
                     height: '24px', 
+                    minWidth: '24px',
+                    minHeight: '24px',
+                    flexShrink: 0,
                     borderRadius: question.type === 'radio' ? '50%' : '2px',
                     border: `2px solid ${isSelected ? 'var(--color-primary)' : 'var(--color-border)'}`,
                     marginRight: '1rem',
