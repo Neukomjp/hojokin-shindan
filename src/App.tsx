@@ -102,7 +102,7 @@ function App() {
       {/* 共通ヘッダー */}
       <header style={{ backgroundColor: 'var(--color-primary)', padding: '0.75rem 1.5rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: 'var(--shadow-md)' }}>
         <img src="/logo.png" alt="補助くる" style={{ height: '44px', objectFit: 'contain' }} />
-        <h1 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>公的支援制度・活用診断</h1>
+        <h1 style={{ fontSize: '1.4rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>公的支援制度・活用診断</h1>
       </header>
 
       <main style={{ flex: 1, padding: '2rem 1rem' }}>
