@@ -100,18 +100,18 @@ function App() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* 共通ヘッダー */}
-      <header style={{ backgroundColor: 'var(--color-primary)', padding: '0.75rem 1.5rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: 'var(--shadow-md)' }}>
+      <header className="app-header" style={{ backgroundColor: 'var(--color-primary)', padding: '0.75rem 1.5rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: 'var(--shadow-md)' }}>
         <img src="/logo.png" alt="補助くる" style={{ height: '44px', objectFit: 'contain' }} />
         <h1 style={{ fontSize: '1.4rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>公的支援制度・活用診断</h1>
       </header>
 
-      <main style={{ flex: 1, padding: '2rem 1rem' }}>
+      <main className="app-main" style={{ flex: 1, padding: '2rem 1rem' }}>
         {step === 'intro' && (
           <div className="container text-center animate-fade-in" style={{ marginTop: '2rem' }}>
-            <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-primary)', lineHeight: 1.4 }}>
+            <h2 className="intro-title" style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-primary)', lineHeight: 1.4 }}>
               1分でわかる！<br/>補助金・助成金 無料診断
             </h2>
-            <p style={{ marginBottom: '2.5rem', fontSize: '1.1rem', color: 'var(--color-text-body)' }}>
+            <p className="intro-desc" style={{ marginBottom: '2.5rem', fontSize: '1.1rem', color: 'var(--color-text-body)' }}>
               簡単な6つの質問に答えるだけで、あなたの会社が受給できる可能性のある補助金・助成金の金額と種類がわかります。
             </p>
 
@@ -136,7 +136,7 @@ function App() {
               <p style={{ marginBottom: '1.5rem', fontSize: '0.95rem', color: 'var(--color-text-light)' }}>
                 貴社のWebサイトのURLを入力すると、AIがサイト情報を分析して自動で補助金診断を行います。
               </p>
-              <form onSubmit={handleUrlSubmit} style={{ display: 'flex', gap: '0.5rem' }}>
+              <form onSubmit={handleUrlSubmit} className="url-form" style={{ display: 'flex', gap: '0.5rem' }}>
                 <input 
                   type="url" 
                   value={scanUrl}
@@ -181,7 +181,7 @@ function App() {
       </main>
 
       {/* 共通フッター */}
-      <footer style={{ backgroundColor: 'var(--color-bg-alt)', padding: '2rem', textAlign: 'center', color: 'var(--color-text-light)', marginTop: 'auto' }}>
+      <footer className="app-footer" style={{ backgroundColor: 'var(--color-bg-alt)', padding: '2rem', textAlign: 'center', color: 'var(--color-text-light)', marginTop: 'auto' }}>
         <p style={{ fontSize: '0.85rem' }}>&copy; 2026 補助くる All Rights Reserved.</p>
       </footer>
     </div>

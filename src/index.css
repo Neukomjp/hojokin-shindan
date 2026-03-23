@@ -252,3 +252,101 @@ a:hover {
   font-weight: 700;
   color: var(--color-text-main);
 }
+
+/* ==============================
+   Mobile Responsive
+   ============================== */
+@media (max-width: 768px) {
+  /* Header */
+  .app-header {
+    padding: 0.5rem 0.75rem !important;
+  }
+  .app-header img {
+    height: 32px !important;
+  }
+  .app-header h1 {
+    font-size: 0.95rem !important;
+  }
+
+  /* Main content */
+  .app-main {
+    padding: 1rem 0.5rem !important;
+  }
+
+  /* Container */
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Intro page */
+  .intro-title {
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  .intro-desc {
+    font-size: 0.95rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Glass panels */
+  .glass-panel {
+    padding: 1.25rem !important;
+  }
+
+  /* URL form stacking */
+  .url-form {
+    flex-direction: column !important;
+  }
+  .url-form .btn {
+    width: 100%;
+  }
+
+  /* Buttons */
+  .btn-lg {
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  /* Option cards */
+  .option-card {
+    padding: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Result page */
+  .result-amount {
+    font-size: 3rem !important;
+  }
+  .result-amount-unit {
+    font-size: 1.2rem !important;
+  }
+
+  /* Lead form amount banner */
+  .lead-amount-banner span {
+    font-size: 2.2rem !important;
+  }
+
+  /* Footer */
+  .app-footer {
+    padding: 1.25rem 0.75rem !important;
+  }
+  .app-footer p {
+    font-size: 0.75rem !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .app-header h1 {
+    font-size: 0.8rem !important;
+  }
+  .app-header img {
+    height: 28px !important;
+  }
+  .intro-title {
+    font-size: 1.3rem !important;
+  }
+  .btn-lg {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+}
