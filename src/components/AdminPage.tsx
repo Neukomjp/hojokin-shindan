@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { supabase } from '../lib/supabase';
 import { questions } from '../data/questions';
-import { Download } from 'lucide-react';
+import { Download, Trash2 } from 'lucide-react';
 
 type Lead = {
   id: string;
@@ -22,6 +22,8 @@ export default function AdminPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Check initial session
   useEffect(() => {
@@ -81,14 +83,58 @@ export default function AdminPage() {
     await supabase.auth.signOut();
   };
 
-  const handleExportCSV = () => {
-    if (leads.length === 0) return;
+  // Toggle individual checkbox
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
+  // Toggle select all
+  const handleToggleAll = () => {
+    if (selectedIds.size === leads.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(leads.map(l => l.id)));
+    }
+  };
+
+  // Bulk delete
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    const confirmed = window.confirm(`選択した ${selectedIds.size} 件のリードを削除しますか？\nこの操作は取り消せません。`);
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    const idsToDelete = Array.from(selectedIds);
+
+    const { error } = await supabase
+      .from('leads')
+      .delete()
+      .in('id', idsToDelete);
+
+    if (error) {
+      console.error('Failed to delete leads:', error);
+      alert('削除に失敗しました。');
+    } else {
+      setLeads(prev => prev.filter(l => !selectedIds.has(l.id)));
+      setSelectedIds(new Set());
+    }
+    setIsDeleting(false);
+  };
+
+  // Build CSV from a given list of leads
+  const buildCSV = (targetLeads: Lead[]) => {
     const headers = ['登録日時', '会社名', '電話番号', 'メールアドレス', '受給見込み額（万円）', 'スキャンURL'];
-    // Add question titles as headers
     questions.forEach(q => headers.push(q.title));
 
-    const rows = leads.map(lead => {
+    const rows = targetLeads.map(lead => {
       const row: string[] = [
         new Date(lead.created_at).toLocaleString('ja-JP'),
         lead.company_name,
@@ -109,7 +155,6 @@ export default function AdminPage() {
       .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
       .join('\n');
 
-    // BOM for Excel Japanese compatibility
     const bom = '\uFEFF';
     const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -118,6 +163,19 @@ export default function AdminPage() {
     link.download = `leads_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  // Export all
+  const handleExportAll = () => {
+    if (leads.length === 0) return;
+    buildCSV(leads);
+  };
+
+  // Export selected
+  const handleExportSelected = () => {
+    if (selectedIds.size === 0) return;
+    const targetLeads = leads.filter(l => selectedIds.has(l.id));
+    buildCSV(targetLeads);
   };
 
   if (isLoading) {
@@ -168,18 +226,43 @@ export default function AdminPage() {
     );
   }
 
+  const isAllSelected = leads.length > 0 && selectedIds.size === leads.length;
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h1 style={{ fontSize: '2rem', color: 'var(--color-primary)' }}>リード（顧客情報）管理画面</h1>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Bulk actions - show when items are selected */}
+          {selectedIds.size > 0 && (
+            <>
+              <span style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', fontWeight: 600 }}>
+                {selectedIds.size}件選択中
+              </span>
+              <button
+                onClick={handleExportSelected}
+                className="btn btn-primary"
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 1rem', fontSize: '0.9rem' }}
+              >
+                <Download size={16} /> 選択をエクスポート
+              </button>
+              <button
+                onClick={handleBulkDelete}
+                disabled={isDeleting}
+                className="btn"
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 1rem', fontSize: '0.9rem', backgroundColor: 'var(--color-alert)', color: 'white', opacity: isDeleting ? 0.5 : 1 }}
+              >
+                <Trash2 size={16} /> {isDeleting ? '削除中...' : '選択を削除'}
+              </button>
+            </>
+          )}
           <button
-            onClick={handleExportCSV}
+            onClick={handleExportAll}
             disabled={leads.length === 0}
             className="btn btn-primary"
             style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 1rem', fontSize: '0.9rem', opacity: leads.length === 0 ? 0.5 : 1 }}
           >
-            <Download size={16} /> CSVエクスポート
+            <Download size={16} /> 全件CSVエクスポート
           </button>
           <button onClick={handleLogout} className="btn-outline" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }}>
             ログアウト
@@ -191,6 +274,14 @@ export default function AdminPage() {
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead style={{ backgroundColor: 'var(--color-bg-alt)' }}>
             <tr>
+              <th style={{ padding: '1rem 0.75rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap', width: '40px' }}>
+                <input
+                  type="checkbox"
+                  checked={isAllSelected}
+                  onChange={handleToggleAll}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--color-primary)' }}
+                />
+              </th>
               <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>登録日時</th>
               <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>会社名</th>
               <th style={{ padding: '1rem', borderBottom: '2px solid var(--color-border)', whiteSpace: 'nowrap' }}>電話番号</th>
@@ -202,14 +293,22 @@ export default function AdminPage() {
           <tbody>
             {leads.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-light)' }}>
+                <td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-light)' }}>
                   まだ登録されたリード情報はありません。
                 </td>
               </tr>
             ) : (
               leads.map((lead) => (
                 <Fragment key={lead.id}>
-                  <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: expandedLeadId === lead.id ? '#f3fdf8' : 'transparent' }}>
+                  <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: selectedIds.has(lead.id) ? '#e8f5e9' : expandedLeadId === lead.id ? '#f3fdf8' : 'transparent' }}>
+                    <td style={{ padding: '1rem 0.75rem' }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(lead.id)}
+                        onChange={() => handleToggleSelect(lead.id)}
+                        style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--color-primary)' }}
+                      />
+                    </td>
                     <td style={{ padding: '1rem', color: 'var(--color-text-light)' }}>
                       {new Date(lead.created_at).toLocaleString('ja-JP')}
                     </td>
@@ -231,7 +330,7 @@ export default function AdminPage() {
                   </tr>
                   {expandedLeadId === lead.id && (
                     <tr style={{ backgroundColor: '#f9fafb' }}>
-                      <td colSpan={6} style={{ padding: '1.5rem', borderBottom: '1px solid var(--color-border)' }}>
+                      <td colSpan={7} style={{ padding: '1.5rem', borderBottom: '1px solid var(--color-border)' }}>
                         <div style={{ fontSize: '0.95rem', maxWidth: '800px', margin: '0 auto' }}>
                           <h4 style={{ marginBottom: '1rem', color: 'var(--color-primary)', borderBottom: '2px solid var(--color-border)', paddingBottom: '0.5rem', fontWeight: 'bold' }}>診断時の回答内容</h4>
                           
