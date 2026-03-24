@@ -114,10 +114,12 @@ export default function ResultPage({ answers, aiProposal, isUrlScan }: Props) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {result.subsidyCards.map((card) => (
           <div key={card.id} className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <h3 style={{ fontSize: '1.25rem', color: 'var(--color-primary)' }}>{card.title}</h3>
-              <div style={{ background: 'var(--color-primary-light)', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-full)', fontWeight: 700, color: 'var(--color-primary)', fontSize: '0.9rem' }}>
-                最大 {card.maxAmount}万円
+            <div>
+              <h3 style={{ fontSize: '1.15rem', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>{card.title}</h3>
+              <div style={{ background: 'var(--color-primary-light)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', display: 'inline-block' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-light)' }}>最大</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-primary)', marginLeft: '0.5rem' }}>{card.maxAmount.toLocaleString()}</span>
+                <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-primary)', marginLeft: '0.15rem' }}>万円</span>
               </div>
             </div>
             <p style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>{card.description}</p>
