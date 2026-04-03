@@ -108,8 +108,8 @@ export default function LeadForm({ onSubmit, maxAmount, answers }: Props) {
               </div>
             </div>
 
-            {/* ブラーされた結果コンテンツ */}
-            <div style={{ filter: 'blur(6px)', pointerEvents: 'none', userSelect: 'none' }}>
+            {/* ブラーされた結果コンテンツ（ダミーデータ） */}
+            <div style={{ filter: 'blur(6px)', pointerEvents: 'none', userSelect: 'none' }} aria-hidden="true">
               {/* 金額内訳テーブルプレビュー */}
               <div style={{ padding: '1.5rem', marginBottom: '1rem', background: 'var(--color-bg-alt)', borderRadius: 'var(--radius-md)' }}>
                 <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>
@@ -123,25 +123,14 @@ export default function LeadForm({ onSubmit, maxAmount, answers }: Props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {result.subsidyCards.filter(c => c.id !== 'syouene').map((card) => (
-                      <tr key={card.id} style={{ borderBottom: '1px solid #eee' }}>
+                    {['○○○○補助金', '△△△△補助金', '□□□□補助金', '☆☆☆☆助成金', '◇◇◇◇助成金'].map((name, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid #eee' }}>
                         <td style={{ padding: '0.5rem' }}>
-                          <span style={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.7rem', marginRight: '0.4rem', background: 'var(--color-primary-light)', padding: '0.1rem 0.3rem', borderRadius: '3px' }}>補助金</span>
-                          {card.title}
+                          <span style={{ color: idx < 3 ? 'var(--color-primary)' : '#e67e22', fontWeight: 600, fontSize: '0.7rem', marginRight: '0.4rem', background: idx < 3 ? 'var(--color-primary-light)' : '#fef3e2', padding: '0.1rem 0.3rem', borderRadius: '3px' }}>{idx < 3 ? '補助金' : '助成金'}</span>
+                          {name}
                         </td>
-                        <td style={{ textAlign: 'right', padding: '0.5rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                          {card.maxAmount.toLocaleString()} 万円
-                        </td>
-                      </tr>
-                    ))}
-                    {result.employeeSubsidies.map((sub, idx) => (
-                      <tr key={`e-${idx}`} style={{ borderBottom: '1px solid #eee' }}>
-                        <td style={{ padding: '0.5rem' }}>
-                          <span style={{ color: '#e67e22', fontWeight: 600, fontSize: '0.7rem', marginRight: '0.4rem', background: '#fef3e2', padding: '0.1rem 0.3rem', borderRadius: '3px' }}>助成金</span>
-                          {sub.name}
-                        </td>
-                        <td style={{ textAlign: 'right', padding: '0.5rem', fontWeight: 700, color: '#e67e22' }}>
-                          {sub.amount.toLocaleString()} 万円
+                        <td style={{ textAlign: 'right', padding: '0.5rem', fontWeight: 700, color: idx < 3 ? 'var(--color-primary)' : '#e67e22' }}>
+                          {[3000, 1500, 500, 80, 40][idx]} 万円
                         </td>
                       </tr>
                     ))}
@@ -149,17 +138,17 @@ export default function LeadForm({ onSubmit, maxAmount, answers }: Props) {
                 </table>
               </div>
 
-              {/* 補助金カードプレビュー（最大2つ） */}
-              {result.subsidyCards.slice(0, 2).map((card) => (
-                <div key={card.id} style={{ padding: '1.5rem', marginBottom: '1rem', background: 'var(--color-bg-alt)', borderRadius: 'var(--radius-md)' }}>
+              {/* 補助金カードプレビュー（ダミー） */}
+              {['○○○○補助金', '△△△△補助金'].map((name, idx) => (
+                <div key={idx} style={{ padding: '1.5rem', marginBottom: '1rem', background: 'var(--color-bg-alt)', borderRadius: 'var(--radius-md)' }}>
                   <span style={{ color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.7rem', background: 'var(--color-primary-light)', padding: '0.15rem 0.5rem', borderRadius: '4px' }}>補助金</span>
-                  <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', margin: '0.5rem 0' }}>{card.title}</h3>
+                  <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', margin: '0.5rem 0' }}>{name}</h3>
                   <div style={{ background: 'var(--color-primary-light)', padding: '0.4rem 0.8rem', borderRadius: 'var(--radius-md)', display: 'inline-block', marginBottom: '0.5rem' }}>
                     <span style={{ fontSize: '0.8rem', color: 'var(--color-text-light)' }}>最大</span>
-                    <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--color-primary)', marginLeft: '0.4rem' }}>{card.maxAmount.toLocaleString()}</span>
+                    <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--color-primary)', marginLeft: '0.4rem' }}>{[3000, 1500][idx]}</span>
                     <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-primary)', marginLeft: '0.1rem' }}>万円</span>
                   </div>
-                  <p style={{ fontSize: '0.85rem', lineHeight: 1.5 }}>{card.description}</p>
+                  <p style={{ fontSize: '0.85rem', lineHeight: 1.5 }}>この補助金の詳細な説明文がここに表示されます。対象となる事業者の要件や補助率、申請方法などの情報が含まれます。</p>
                 </div>
               ))}
             </div>
