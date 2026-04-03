@@ -155,6 +155,7 @@ function App() {
           <LeadForm 
             onSubmit={handleLeadSubmit}
             maxAmount={calculateDiagnosis(answers).maxAmount}
+            answers={answers}
           />
         )}
 
