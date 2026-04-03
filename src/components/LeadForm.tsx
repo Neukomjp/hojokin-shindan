@@ -155,11 +155,11 @@ export default function LeadForm({ onSubmit, maxAmount, answers }: Props) {
           </div>
         )}
 
-        <h2 className="text-center" style={{ marginBottom: '1rem', fontSize: '1.5rem' }}>
-          診断結果をご覧になる前に
+        <h2 className="text-center" style={{ marginBottom: '0.5rem', fontSize: '1.4rem' }}>
+          あと少しで診断結果が表示されます
         </h2>
-        <p className="text-center" style={{ marginBottom: '2rem', color: 'var(--color-text-light)' }}>
-          ご入力いただいた情報を元に、担当のコンサルタントからより詳しい制度のご案内を行わせていただく場合がございます。
+        <p className="text-center" style={{ marginBottom: '2rem', color: 'var(--color-text-light)', fontSize: '0.9rem', lineHeight: 1.7 }}>
+          より正確な診断結果と専門家からのアドバイスをお届けするため、<br/>以下の情報をご入力ください。
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -209,6 +209,10 @@ export default function LeadForm({ onSubmit, maxAmount, answers }: Props) {
             <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%', maxWidth: '400px' }}>
               診断結果を見る <ChevronRight size={20} />
             </button>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '0.75rem', fontSize: '0.75rem', color: 'var(--color-text-light)' }}>
+              <span>🔒 情報は厳重に管理されます</span>
+              <span>📵 営業電話はしません</span>
+            </div>
           </div>
         </form>
       </div>

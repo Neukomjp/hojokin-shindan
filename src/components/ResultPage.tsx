@@ -194,11 +194,25 @@ export default function ResultPage({ answers, aiProposal, isUrlScan }: Props) {
         ))}
       </div>
 
-      <div className="text-center" style={{ marginTop: '3rem' }}>
-        <p style={{ marginBottom: '1rem', fontWeight: 600 }}>まずは無料で、お気軽に</p>
+      {/* CTA セクション */}
+      <div className="glass-panel" style={{ padding: '2.5rem 2rem', marginTop: '3rem', textAlign: 'center', background: 'linear-gradient(135deg, var(--color-primary-light) 0%, #fff 100%)', borderLeft: '4px solid var(--color-primary)' }}>
+        <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', fontWeight: 600, marginBottom: '0.5rem' }}>
+          ✅ 申請サポート実績多数
+        </p>
+        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--color-text-main)', marginBottom: '0.5rem' }}>
+          まずは無料相談から始めましょう
+        </h3>
+        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-light)', marginBottom: '1.5rem', lineHeight: 1.7 }}>
+          専門のコンサルタントが、貴社に最適な申請プランを<br/>無料でご提案いたします。
+        </p>
         <a href="tel:0523878688" className="btn btn-primary btn-lg" style={{ width: '100%', maxWidth: '400px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-          <MessageCircle size={20} /> 申請の相談をする
+          <MessageCircle size={20} /> 無料で申請の相談をする
         </a>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '1rem', fontSize: '0.78rem', color: 'var(--color-text-light)' }}>
+          <span>📞 平日 9:00-18:00</span>
+          <span>💬 相談無料</span>
+          <span>📝 着手金0円</span>
+        </div>
       </div>
     </div>
   );
