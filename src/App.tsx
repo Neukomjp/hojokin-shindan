@@ -104,7 +104,7 @@ function App() {
         {step === 'intro' && (
           <div className="container text-center animate-fade-in" style={{ marginTop: '2rem' }}>
             <h2 className="intro-title" style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-primary)', lineHeight: 1.4 }}>
-              1分でわかる！<br/>補助金・助成金 無料診断
+              1分でわかる！<br/>AI補助金・助成金 無料診断
             </h2>
             <p className="intro-desc" style={{ marginBottom: '2.5rem', fontSize: '1.1rem', color: 'var(--color-text-body)' }}>
               貴社のWebサイトURLを入力するだけで、AIが自動分析し、受給できる可能性のある補助金・助成金の金額と種類がわかります。
