@@ -237,6 +237,13 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
   // Deduplicate array
   const uniqueEmployeeSubsidies = Array.from(new Set(employeeSubsidies));
 
+  // 該当する補助金カードの最大額も合算する（省エネルギーは常時表示のため除外）
+  for (const card of subsidyCards) {
+    if (card.id !== 'syouene') {
+      maxAmount += card.maxAmount;
+    }
+  }
+
   return {
     maxAmount,
     subsidyCards,
