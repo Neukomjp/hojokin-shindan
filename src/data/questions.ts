@@ -93,6 +93,8 @@ export const questions: Question[] = [
 export type EmployeeSubsidy = {
   name: string;
   amount: number;
+  description: string;
+  url: string;
 };
 
 export type DiagnosisResult = {
@@ -122,27 +124,27 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
   if (hasPrerequisites) {
     if (employeeInitiatives.includes('ai_training')) {
       maxAmount += 30;
-      employeeSubsidies.push({ name: '事業展開等リスキリング支援コース（人材開発支援助成金）', amount: 15 });
-      employeeSubsidies.push({ name: '教育訓練休暇等付与コース（人材開発支援助成金）', amount: 15 });
+      employeeSubsidies.push({ name: '事業展開等リスキリング支援コース（人材開発支援助成金）', amount: 15, description: '新規事業の立ち上げ等の事業展開に伴う人材育成に対する助成金です。AIやDXに関する社内研修を実施した場合に、訓練経費や賃金助成が受けられます。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/d01-1.html' });
+      employeeSubsidies.push({ name: '教育訓練休暇等付与コース（人材開発支援助成金）', amount: 15, description: '従業員に対して教育訓練休暇制度を導入し、実際に休暇を取得させた事業主に支給される助成金です。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/d01-1.html' });
     }
     if (employeeInitiatives.includes('external_training')) {
       maxAmount += 30;
-      employeeSubsidies.push({ name: '教育訓練休暇等付与コース（人材開発支援助成金）', amount: 30 });
+      employeeSubsidies.push({ name: '教育訓練休暇等付与コース（人材開発支援助成金）', amount: 30, description: '従業員に対して教育訓練休暇制度を導入し、実際に休暇を取得させた事業主に支給される助成金です。外部研修の受講も対象となります。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/kyufukin/d01-1.html' });
     }
     if (employeeInitiatives.includes('hire_new')) {
       maxAmount += 80;
-      employeeSubsidies.push({ name: '正社員化コース（キャリアアップ助成金）', amount: 80 });
+      employeeSubsidies.push({ name: '正社員化コース（キャリアアップ助成金）', amount: 80, description: '有期契約労働者、短時間労働者、派遣労働者などを正規雇用労働者に転換した場合に支給される助成金です。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/part_haken/jigyounushi/career.html' });
     }
     if (employeeInitiatives.includes('childbirth')) {
       maxAmount += 82;
-      employeeSubsidies.push({ name: '出生時両立支援コース（両立支援等助成金）', amount: 42 });
-      employeeSubsidies.push({ name: '育児休業等支援コース（両立支援等助成金）', amount: 40 });
+      employeeSubsidies.push({ name: '出生時両立支援コース（両立支援等助成金）', amount: 42, description: '男性従業員が育児休業を取得しやすい雇用環境の整備を行い、実際に取得させた事業主に支給される助成金です。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kodomo/shokuba_kosodate/ryouritsu01/index.html' });
+      employeeSubsidies.push({ name: '育児休業等支援コース（両立支援等助成金）', amount: 40, description: '育児休業の円滑な取得・職場復帰を支援する取り組みを行った事業主に支給される助成金です。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kodomo/shokuba_kosodate/ryouritsu01/index.html' });
     }
     if (employeeInitiatives.includes('part_time_improvement')) {
       maxAmount += 180;
-      employeeSubsidies.push({ name: '賞与・退職金制度コース（キャリアアップ助成金）', amount: 40 });
-      employeeSubsidies.push({ name: '賃金規定等共通化コース（キャリアアップ助成金）', amount: 60 });
-      employeeSubsidies.push({ name: '正社員化コース（キャリアアップ助成金）', amount: 80 });
+      employeeSubsidies.push({ name: '賞与・退職金制度コース（キャリアアップ助成金）', amount: 40, description: '有期契約労働者等を対象に賞与・退職金制度を新たに設け、適用した場合に支給される助成金です。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/part_haken/jigyounushi/career.html' });
+      employeeSubsidies.push({ name: '賃金規定等共通化コース（キャリアアップ助成金）', amount: 60, description: '有期契約労働者等と正規雇用労働者との共通の賃金規定等を新たに規定・適用した場合に支給される助成金です。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/part_haken/jigyounushi/career.html' });
+      employeeSubsidies.push({ name: '正社員化コース（キャリアアップ助成金）', amount: 80, description: '有期契約労働者、短時間労働者、派遣労働者などを正規雇用労働者に転換した場合に支給される助成金です。', url: 'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/part_haken/jigyounushi/career.html' });
     }
   }
 

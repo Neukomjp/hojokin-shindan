@@ -143,13 +143,17 @@ export default function ResultPage({ answers, aiProposal, isUrlScan }: Props) {
 
       {/* 事業系補助金リスト */}
       <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', fontSize: '1.5rem', color: 'var(--color-text-main)', fontWeight: 700 }}>
-        {result.maxAmount === 0 ? '条件次第で獲得できる補助金' : '主要な該当する補助金'}
+        該当する補助金・助成金の詳細
       </h2>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        {/* 補助金カード */}
         {result.subsidyCards.map((card) => (
           <div key={card.id} className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.75rem', background: 'var(--color-primary-light)', padding: '0.2rem 0.6rem', borderRadius: '4px' }}>補助金</span>
+              </div>
               <h3 style={{ fontSize: '1.15rem', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>{card.title}</h3>
               <div style={{ background: 'var(--color-primary-light)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', display: 'inline-block' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--color-text-light)' }}>最大</span>
@@ -160,6 +164,29 @@ export default function ResultPage({ answers, aiProposal, isUrlScan }: Props) {
             <p style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>{card.description}</p>
             <div style={{ marginTop: '0.5rem' }}>
               <a href={card.url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem' }}>
+                <ExternalLink size={14} /> 詳細ページはこちら
+              </a>
+            </div>
+          </div>
+        ))}
+
+        {/* 助成金カード */}
+        {result.employeeSubsidies.map((sub, idx) => (
+          <div key={`emp-card-${idx}`} className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <span style={{ color: '#e67e22', fontWeight: 700, fontSize: '0.75rem', background: '#fef3e2', padding: '0.2rem 0.6rem', borderRadius: '4px' }}>助成金</span>
+              </div>
+              <h3 style={{ fontSize: '1.15rem', color: '#e67e22', marginBottom: '0.75rem' }}>{sub.name}</h3>
+              <div style={{ background: '#fef3e2', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', display: 'inline-block' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-light)' }}>最大</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 800, color: '#e67e22', marginLeft: '0.5rem' }}>{sub.amount.toLocaleString()}</span>
+                <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#e67e22', marginLeft: '0.15rem' }}>万円</span>
+              </div>
+            </div>
+            <p style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>{sub.description}</p>
+            <div style={{ marginTop: '0.5rem' }}>
+              <a href={sub.url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem' }}>
                 <ExternalLink size={14} /> 詳細ページはこちら
               </a>
             </div>
