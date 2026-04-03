@@ -4,11 +4,12 @@ import LeadForm from './components/LeadForm';
 import ResultPage from './components/ResultPage';
 import AdminPage from './components/AdminPage';
 import UrlScanner from './components/UrlScanner';
+import UrlConfirm from './components/UrlConfirm';
 import { supabase } from './lib/supabase';
 import { ArrowRight, CheckCircle2, Globe } from 'lucide-react';
 import { calculateDiagnosis } from './data/questions';
 
-type Step = 'intro' | 'questionnaire' | 'url_scan' | 'lead_form' | 'result';
+type Step = 'intro' | 'questionnaire' | 'url_scan' | 'url_confirm' | 'lead_form' | 'result';
 
 function App() {
   const [step, setStep] = useState<Step>('intro');
@@ -47,6 +48,12 @@ function App() {
   const handleUrlScanComplete = (autoAnswers: Record<string, string[]>, aiProposal?: string) => {
     setAnswers(autoAnswers);
     if (aiProposal) setAiProposalText(aiProposal);
+    setStep('url_confirm');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleUrlConfirmComplete = (confirmedAnswers: Record<string, string[]>) => {
+    setAnswers(confirmedAnswers);
     setStep('lead_form');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -165,6 +172,13 @@ function App() {
           <UrlScanner 
             url={scanUrl}
             onComplete={handleUrlScanComplete}
+          />
+        )}
+
+        {step === 'url_confirm' && (
+          <UrlConfirm 
+            initialAnswers={answers}
+            onComplete={handleUrlConfirmComplete}
           />
         )}
 

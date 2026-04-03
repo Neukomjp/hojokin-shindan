@@ -141,14 +141,30 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
     }
   }
 
-  // Common Business Subsidies
-  subsidyCards.push({
-    id: 'syoukibo',
-    title: '小規模事業者持続化補助金',
-    description: '小規模事業者が、働き方改革や被用者保険の適用拡大、賃金引上げ、インボイス導入等の制度変更に対応するため、経営計画を作成し、それらに基づいて行う販路開拓の取組み等の経費の一部を補助するものです。',
-    maxAmount: 250, // 賃上げ特例等適用時の最大額
-    url: 'https://r6.jizokukahojokin.info/'
-  });
+  const businessInitiatives = answers['businessInitiatives'] || [];
+  const budget = answers['budget']?.[0] || '未定';
+  const employeeCount = answers['employeeCount']?.[0] || '0名';
+  const industry = answers['industry']?.[0] || 'その他';
+
+  // 小規模事業者持続化補助金の判定
+  let isSmallBusiness = false;
+  const isServiceOrRetail = ['サービス業', '情報通信・IT業', '飲食業', '小売業', 'その他'].includes(industry);
+  if (isServiceOrRetail) {
+    if (['0名', '1-5名'].includes(employeeCount)) isSmallBusiness = true;
+  } else {
+    // 建設業、製造業など
+    if (['0名', '1-5名', '6-20名'].includes(employeeCount)) isSmallBusiness = true;
+  }
+
+  if (isSmallBusiness) {
+    subsidyCards.push({
+      id: 'syoukibo',
+      title: '小規模事業者持続化補助金',
+      description: '小規模事業者が、働き方改革や被用者保険の適用拡大、賃金引上げ、インボイス導入等の制度変更に対応するため、経営計画を作成し、それらに基づいて行う販路開拓の取組み等の経費の一部を補助するものです。',
+      maxAmount: 250,
+      url: 'https://r6.jizokukahojokin.info/'
+    });
+  }
 
   subsidyCards.push({
     id: 'syouene',
@@ -158,28 +174,63 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
     url: 'https://syouenehojyokin.sii.or.jp/'
   });
 
-  const businessInitiatives = answers['businessInitiatives'] || [];
-  const budget = answers['budget']?.[0] || '未定';
-
-  // IT Tool Subsidy
+  // IT導入補助金（デジタル化・AI導入補助金）
   if (businessInitiatives.includes('it_tools') && budget !== '未定') {
     subsidyCards.unshift({
       id: 'it_dounyu',
-      title: 'IT導入補助金',
+      title: 'IT導入補助金（デジタル化・AI導入等）',
       description: '中小企業・小規模事業者等が業務効率化・売上アップをするためのＩＴツールを導入する場合に補助します。事前に登録されたツール・事業者から選んで導入をおこないます。',
-      maxAmount: 450,
+      maxAmount: 350,
       url: 'https://it-shien.smrj.go.jp/'
     });
   }
 
-  // Monodukuri Subsidy
+  // ものづくり補助金
   if (businessInitiatives.includes('machines_interior') && budget !== '未定') {
+    let maxMonoAmount = 859;
+    if (employeeCount === '6-20名') maxMonoAmount = 1250;
+    else if (employeeCount === '21-50名') maxMonoAmount = 2500;
+    else if (['51-100名', '101-300名', '301名以上'].includes(employeeCount)) maxMonoAmount = 3500;
+
     subsidyCards.unshift({
       id: 'monodukuri',
       title: 'ものづくり補助金',
       description: '中小企業・小規模事業者等の生産性向上に資する「革新的な新製品・新サービス開発」や海外需要開拓を行う事業のために必要な設備投資等に要する経費の一部を補助する制度です。',
-      maxAmount: 4000, // グローバル枠や大幅賃上げ特例等の最大レベル
+      maxAmount: maxMonoAmount,
       url: 'http://portal.monodukuri-hojo.jp'
+    });
+  }
+
+  // 新事業進出補助金
+  if (businessInitiatives.includes('new_business')) {
+    let maxShinJigyoAmount = 3000;
+    if (employeeCount === '21-50名') maxShinJigyoAmount = 5000;
+    else if (employeeCount === '51-100名') maxShinJigyoAmount = 7000;
+    else if (['101-300名', '301名以上'].includes(employeeCount)) maxShinJigyoAmount = 9000;
+
+    subsidyCards.unshift({
+      id: 'shinjigyo',
+      title: '新事業進出補助金',
+      description: '既存事業とは異なる新たな事業の立ち上げや、業態転換などに必要な設備投資・システム構築費用を補助する制度です。',
+      maxAmount: maxShinJigyoAmount,
+      url: 'https://jigyou-saikouchiku.go.jp/'
+    });
+  }
+
+  // 中小企業省力化投資補助金
+  if (businessInitiatives.includes('it_tools') || businessInitiatives.includes('machines_interior')) {
+    let maxShoryokukaAmount = 1000;
+    if (employeeCount === '6-20名') maxShoryokukaAmount = 2000;
+    else if (employeeCount === '21-50名') maxShoryokukaAmount = 4000;
+    else if (employeeCount === '51-100名') maxShoryokukaAmount = 6500;
+    else if (['101-300名', '301名以上'].includes(employeeCount)) maxShoryokukaAmount = 10000;
+
+    subsidyCards.unshift({
+      id: 'shoryokuka',
+      title: '中小企業省力化投資補助金',
+      description: 'IoT、ロボット等の人手不足解消に効果がある汎用製品を導入するための事業費等の経費の一部を補助する制度です。',
+      maxAmount: maxShoryokukaAmount,
+      url: 'https://shoryokuka.smrj.go.jp/'
     });
   }
 

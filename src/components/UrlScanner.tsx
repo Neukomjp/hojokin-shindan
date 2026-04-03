@@ -94,6 +94,32 @@ export default function UrlScanner({ url, onComplete }: Props) {
                mappedAnswers['businessInitiatives'] = businessInitiatives;
                mappedAnswers['employeeInitiatives'] = employeeInitiatives;
                
+               // 従業員数のマッピング (q1: 1=0名, 2=1-5名, 3=6-20名, 4=21-50名, 5=51名以上)
+               let empCount = '0名';
+               if (rawAnswers.q1 && rawAnswers.q1[0]) {
+                 switch(rawAnswers.q1[0]) {
+                   case '1': empCount = '0名'; break;
+                   case '2': empCount = '1-5名'; break;
+                   case '3': empCount = '6-20名'; break;
+                   case '4': empCount = '21-50名'; break;
+                   case '5': empCount = '51-100名'; break; // 51名以上の代表値として使用
+                 }
+               }
+               mappedAnswers['employeeCount'] = [empCount];
+
+               // 業種のマッピング (q2)
+               let indCount = 'その他';
+               if (rawAnswers.q2 && rawAnswers.q2[0]) {
+                 switch(rawAnswers.q2[0]) {
+                   case '1': indCount = '情報通信・IT業'; break;
+                   case '2': indCount = '飲食業'; break;
+                   case '3': indCount = '小売業'; break;
+                   case '4': indCount = '製造業'; break; // 建設業も合算されるが便宜上製造業に統一
+                   case '5': case '6': case '7': case '8': indCount = 'サービス業'; break;
+                 }
+               }
+               mappedAnswers['industry'] = [indCount];
+               
                // 予算の判定（未定以外であればなんでもOK）
                mappedAnswers['budget'] = rawAnswers.q4 && rawAnswers.q4[0] !== '1' ? ['150万円〜300万円'] : ['未定'];
 
