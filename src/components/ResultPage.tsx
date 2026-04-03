@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { calculateDiagnosis } from '../data/questions';
-import { PiggyBank, ExternalLink, MessageCircle } from 'lucide-react';
+import { ExternalLink, MessageCircle } from 'lucide-react';
 
 type Props = {
   answers: Record<string, string[]>;
@@ -67,29 +67,64 @@ export default function ResultPage({ answers, aiProposal, isUrlScan }: Props) {
         </p>
         <div style={{ margin: '1rem 0', display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '4rem', fontWeight: 900, color: 'var(--color-primary)', lineHeight: 1 }}>
-            {animatedAmount}
+            {animatedAmount.toLocaleString()}
           </span>
           <span style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--color-text-main)' }}>
             万円
           </span>
         </div>
-        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)' }}>
+        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', marginBottom: '2rem' }}>
           ※独自の算定基準に基づき試算した期待金額を表示しています
         </p>
         
-        {result.employeeSubsidies.length > 0 && (
-          <div style={{ marginTop: '2rem', textAlign: 'left', background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
-            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <PiggyBank size={18} color="var(--color-primary)" />
-              該当する雇用・研修系助成金（合算済）
-            </h3>
-            <ul style={{ paddingLeft: '1.5rem', fontSize: '0.9rem' }}>
-              {result.employeeSubsidies.map((sub, idx) => (
-                <li key={idx} style={{ marginBottom: '0.5rem' }}>{sub}</li>
+        {/* 金額の内訳テーブル */}
+        <div style={{ textAlign: 'left', background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-primary)' }}>
+            📊 金額の内訳
+          </h3>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+            <thead>
+              <tr style={{ borderBottom: '2px solid var(--color-primary)' }}>
+                <th style={{ textAlign: 'left', padding: '0.6rem 0.5rem', color: 'var(--color-text-main)' }}>制度名</th>
+                <th style={{ textAlign: 'right', padding: '0.6rem 0.5rem', color: 'var(--color-text-main)', whiteSpace: 'nowrap' }}>最大額</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* 補助金カード（省エネ除く） */}
+              {result.subsidyCards.filter(c => c.id !== 'syouene').map((card) => (
+                <tr key={card.id} style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '0.6rem 0.5rem' }}>
+                    <span style={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.75rem', marginRight: '0.5rem', background: 'var(--color-primary-light)', padding: '0.15rem 0.4rem', borderRadius: '3px' }}>補助金</span>
+                    {card.title}
+                  </td>
+                  <td style={{ textAlign: 'right', padding: '0.6rem 0.5rem', fontWeight: 700, color: 'var(--color-primary)', whiteSpace: 'nowrap' }}>
+                    {card.maxAmount.toLocaleString()} 万円
+                  </td>
+                </tr>
               ))}
-            </ul>
-          </div>
-        )}
+              {/* 助成金 */}
+              {result.employeeSubsidies.map((sub, idx) => (
+                <tr key={`emp-${idx}`} style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '0.6rem 0.5rem' }}>
+                    <span style={{ color: '#e67e22', fontWeight: 600, fontSize: '0.75rem', marginRight: '0.5rem', background: '#fef3e2', padding: '0.15rem 0.4rem', borderRadius: '3px' }}>助成金</span>
+                    {sub.name}
+                  </td>
+                  <td style={{ textAlign: 'right', padding: '0.6rem 0.5rem', fontWeight: 700, color: '#e67e22', whiteSpace: 'nowrap' }}>
+                    {sub.amount.toLocaleString()} 万円
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr style={{ borderTop: '2px solid var(--color-primary)' }}>
+                <td style={{ padding: '0.8rem 0.5rem', fontWeight: 800, fontSize: '1rem' }}>合計</td>
+                <td style={{ textAlign: 'right', padding: '0.8rem 0.5rem', fontWeight: 900, fontSize: '1.2rem', color: 'var(--color-primary)' }}>
+                  {result.maxAmount.toLocaleString()} 万円
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
 
       {/* 条件アラート */}

@@ -90,10 +90,15 @@ export const questions: Question[] = [
   }
 ];
 
+export type EmployeeSubsidy = {
+  name: string;
+  amount: number;
+};
+
 export type DiagnosisResult = {
   maxAmount: number;
   subsidyCards: SubsidyCard[];
-  employeeSubsidies: string[];
+  employeeSubsidies: EmployeeSubsidy[];
 };
 
 export type SubsidyCard = {
@@ -106,7 +111,7 @@ export type SubsidyCard = {
 
 export function calculateDiagnosis(answers: Record<string, string[]>): DiagnosisResult {
   let maxAmount = 0;
-  const employeeSubsidies: string[] = [];
+  const employeeSubsidies: EmployeeSubsidy[] = [];
   const subsidyCards: SubsidyCard[] = [];
 
   const companyStatus = answers['companyStatus'] || [];
@@ -117,27 +122,27 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
   if (hasPrerequisites) {
     if (employeeInitiatives.includes('ai_training')) {
       maxAmount += 30;
-      employeeSubsidies.push('事業展開等リスキリング支援コース（人材開発支援助成金）');
-      employeeSubsidies.push('教育訓練休暇等付与コース（人材開発支援助成金）');
+      employeeSubsidies.push({ name: '事業展開等リスキリング支援コース（人材開発支援助成金）', amount: 15 });
+      employeeSubsidies.push({ name: '教育訓練休暇等付与コース（人材開発支援助成金）', amount: 15 });
     }
     if (employeeInitiatives.includes('external_training')) {
       maxAmount += 30;
-      employeeSubsidies.push('教育訓練休暇等付与コース（人材開発支援助成金）');
+      employeeSubsidies.push({ name: '教育訓練休暇等付与コース（人材開発支援助成金）', amount: 30 });
     }
     if (employeeInitiatives.includes('hire_new')) {
       maxAmount += 80;
-      employeeSubsidies.push('正社員化コース（キャリアアップ助成金）');
+      employeeSubsidies.push({ name: '正社員化コース（キャリアアップ助成金）', amount: 80 });
     }
     if (employeeInitiatives.includes('childbirth')) {
       maxAmount += 82;
-      employeeSubsidies.push('出生時両立支援コース（両立支援等助成金）');
-      employeeSubsidies.push('育児休業等支援コース（両立支援等助成金）');
+      employeeSubsidies.push({ name: '出生時両立支援コース（両立支援等助成金）', amount: 42 });
+      employeeSubsidies.push({ name: '育児休業等支援コース（両立支援等助成金）', amount: 40 });
     }
     if (employeeInitiatives.includes('part_time_improvement')) {
       maxAmount += 180;
-      employeeSubsidies.push('賞与・退職金制度コース（キャリアアップ助成金）');
-      employeeSubsidies.push('賃金規定等共通化コース（キャリアアップ助成金）');
-      employeeSubsidies.push('正社員化コース（キャリアアップ助成金）');
+      employeeSubsidies.push({ name: '賞与・退職金制度コース（キャリアアップ助成金）', amount: 40 });
+      employeeSubsidies.push({ name: '賃金規定等共通化コース（キャリアアップ助成金）', amount: 60 });
+      employeeSubsidies.push({ name: '正社員化コース（キャリアアップ助成金）', amount: 80 });
     }
   }
 
@@ -234,8 +239,15 @@ export function calculateDiagnosis(answers: Record<string, string[]>): Diagnosis
     });
   }
 
-  // Deduplicate array
-  const uniqueEmployeeSubsidies = Array.from(new Set(employeeSubsidies));
+  // Deduplicate by name (keep the one with larger amount)
+  const subsidyMap = new Map<string, EmployeeSubsidy>();
+  for (const sub of employeeSubsidies) {
+    const existing = subsidyMap.get(sub.name);
+    if (!existing || sub.amount > existing.amount) {
+      subsidyMap.set(sub.name, sub);
+    }
+  }
+  const uniqueEmployeeSubsidies = Array.from(subsidyMap.values());
 
   // 該当する補助金カードの最大額も合算する（省エネルギーは常時表示のため除外）
   for (const card of subsidyCards) {
