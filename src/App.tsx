@@ -105,9 +105,6 @@ function App() {
           <div className="container text-center animate-fade-in" style={{ marginTop: '1.5rem' }}>
             {/* ヒーローセクション */}
             <div style={{ marginBottom: '2rem' }}>
-              <div style={{ display: 'inline-block', background: 'var(--color-primary-light)', padding: '0.35rem 1rem', borderRadius: 'var(--radius-full)', marginBottom: '1rem', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-primary)' }}>
-                🤖 AIが自動で診断します
-              </div>
               <h2 className="intro-title" style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--color-text-main)', lineHeight: 1.4 }}>
                 <span style={{ color: 'var(--color-primary)' }}>最大数千万円</span>の<br/>補助金・助成金を逃していませんか？
               </h2>
@@ -152,32 +149,6 @@ function App() {
                   無料診断
                 </button>
               </form>
-            </div>
-
-            {/* 3ステップ説明 */}
-            <div style={{ maxWidth: '520px', margin: '0 auto 2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem' }}>
-                {[
-                  { step: '01', icon: '🔗', text: 'URLを入力' },
-                  { step: '02', icon: '🤖', text: 'AIが自動分析' },
-                  { step: '03', icon: '📊', text: '結果を確認' },
-                ].map((s, i) => (
-                  <div key={i} style={{ flex: 1, textAlign: 'center', position: 'relative' }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--color-primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.5rem', fontSize: '1.3rem' }}>
-                      {s.icon}
-                    </div>
-                    <p style={{ fontSize: '0.7rem', color: 'var(--color-primary)', fontWeight: 700, marginBottom: '0.15rem' }}>STEP {s.step}</p>
-                    <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-main)', margin: 0 }}>{s.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 安心メッセージ */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', fontSize: '0.8rem', color: 'var(--color-text-light)', marginBottom: '1rem', flexWrap: 'wrap' }}>
-              <span>🔒 SSL暗号化通信</span>
-              <span>📋 入力情報は厳重管理</span>
-              <span>💰 完全無料</span>
             </div>
           </div>
         )}
