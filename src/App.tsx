@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
-import Questionnaire from './components/Questionnaire';
 import LeadForm from './components/LeadForm';
 import ResultPage from './components/ResultPage';
 import AdminPage from './components/AdminPage';
 import UrlScanner from './components/UrlScanner';
 import UrlConfirm from './components/UrlConfirm';
 import { supabase } from './lib/supabase';
-import { ArrowRight, CheckCircle2, Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { calculateDiagnosis } from './data/questions';
 
-type Step = 'intro' | 'questionnaire' | 'url_scan' | 'url_confirm' | 'lead_form' | 'result';
+type Step = 'intro' | 'url_scan' | 'url_confirm' | 'lead_form' | 'result';
 
 function App() {
   const [step, setStep] = useState<Step>('intro');
@@ -26,17 +25,6 @@ function App() {
     return () => window.removeEventListener('hashchange', checkHash);
   }, []);
 
-  const handleStart = () => {
-    setScanUrl(''); // Clear the URL state if they start a manual diagnosis
-    setAiProposalText(null); // Clear previous AI text
-    setStep('questionnaire');
-  };
-
-  const handleQuestionnaireComplete = (collectedAnswers: Record<string, string[]>) => {
-    setAnswers(collectedAnswers);
-    setStep('lead_form');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   const handleUrlSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,26 +107,12 @@ function App() {
               1分でわかる！<br/>補助金・助成金 無料診断
             </h2>
             <p className="intro-desc" style={{ marginBottom: '2.5rem', fontSize: '1.1rem', color: 'var(--color-text-body)' }}>
-              簡単な6つの質問に答えるだけで、あなたの会社が受給できる可能性のある補助金・助成金の金額と種類がわかります。
+              貴社のWebサイトURLを入力するだけで、AIが自動分析し、受給できる可能性のある補助金・助成金の金額と種類がわかります。
             </p>
-
-            <div className="glass-panel" style={{ padding: '2rem', marginBottom: '3rem', textAlign: 'left', maxWidth: '500px', margin: '0 auto 3rem auto' }}>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-primary)' }}>
-                <CheckCircle2 /> 手動で診断を開始する
-              </h3>
-              <p style={{ marginBottom: '1.5rem', fontSize: '0.95rem', color: 'var(--color-text-light)' }}>
-                会社の状況について6つの質問に回答し、受給見込み金額を確認します。
-              </p>
-              <div style={{ textAlign: 'center' }}>
-                <button onClick={handleStart} className="btn btn-primary btn-lg" style={{ fontSize: '1.1rem', padding: '1rem 2rem', width: '100%' }}>
-                  無料診断をスタートする <ArrowRight style={{ marginLeft: '8px' }} />
-                </button>
-              </div>
-            </div>
 
             <div className="glass-panel" style={{ padding: '2rem', marginBottom: '3rem', textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
               <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-primary)' }}>
-                <Globe /> 自社のURLから自動診断する
+                <Globe /> 自社のURLから無料診断する
               </h3>
               <p style={{ marginBottom: '1.5rem', fontSize: '0.95rem', color: 'var(--color-text-light)' }}>
                 貴社のWebサイトのURLを入力すると、AIがサイト情報を分析して自動で補助金診断を行います。
@@ -153,20 +127,15 @@ function App() {
                   style={{ flex: 1, padding: '0.8rem' }}
                   required 
                 />
-                <button type="submit" className="btn btn-outline" style={{ whiteSpace: 'nowrap' }}>
-                  自動診断
+                <button type="submit" className="btn btn-primary" style={{ whiteSpace: 'nowrap' }}>
+                  無料診断
                 </button>
               </form>
             </div>
           </div>
         )}
 
-        {step === 'questionnaire' && (
-          <Questionnaire 
-            onComplete={handleQuestionnaireComplete} 
-            onBack={() => setStep('intro')}
-          />
-        )}
+
 
         {step === 'url_scan' && (
           <UrlScanner 
