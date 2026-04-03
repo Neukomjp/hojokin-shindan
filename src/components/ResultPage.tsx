@@ -54,7 +54,7 @@ export default function ResultPage({ answers, aiProposal, isUrlScan }: Props) {
           <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--color-primary)', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             ✨ AIからの個別提案
           </h3>
-          <p style={{ fontSize: '0.95rem', lineHeight: '1.8', color: 'var(--color-text-main)', whiteSpace: 'pre-wrap' }}>
+          <p style={{ fontSize: '0.95rem', lineHeight: '1.8', color: 'var(--color-text-main)', whiteSpace: 'pre-wrap', wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
             {aiProposal}
           </p>
         </div>
